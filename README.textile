@@ -1,0 +1,21 @@
+h1. Almaz
+
+A super simple Rack middleware to log all paths and queries to Redis
+
+h2. Usage
+
+<pre>
+  <code>
+  require 'almaz'
+
+  use Almaz::Capture 
+  # used to capture all requests
+  
+  use Almaz::View 
+  # add /stats
+
+  Almaz::View.user('jpoz','pass') 
+  # set your username and password here for the /stats area
+  
+  </code>
+</pre>
