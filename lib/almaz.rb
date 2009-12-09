@@ -1,23 +1,31 @@
 require 'rubygems'
 require 'sinatra'
 require 'redis'
+require 'cgi'
 
 class Almaz
   
   class Capture
+    @@session_variable = 'session_id'
+    @@redis_db = 0
+    
+    def self.session_variable=(val)
+      @@session_variable = val
+    end
+    
+    def self.redis_db=(val)
+      @@redis_db = val
+    end
+    
     def initialize(app)
       @app = app
     end
     
     def call(env)
-      puts env.inspect
-      
-      r = Redis.new
-      
-      request_num = r.incr("almaz::requests")      
-      r["almaz::path::#{request_num}"] = env['REQUEST_PATH']
-      r["almaz::query::#{request_num}"] = env['QUERY_STRING']
-      
+      # puts env.inspect
+      @r = Redis.new(:db => @@redis_db)
+      @r.push_tail("almaz::#{@@session_variable}::#{env['rack.session'][@@session_variable]}", "#{env['REQUEST_METHOD']} #{env['PATH_INFO']} #{env['QUERY_STRING']}#{CGI.unescape(env['rack.input'].read)}")
+      env['rack.input'].rewind
       @app.call(env)
     end
   end
