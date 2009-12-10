@@ -7,7 +7,7 @@ enable :sessions
 use Almaz::Capture # used to capture all requests
 use Almaz::View # add /stats
 
-Almaz::Capture.session_variable = 'name'
+Almaz.session_variable = 'name'
 
 Almaz::View.user('jpoz','pass') # set your username and password here for the /stats area
 
