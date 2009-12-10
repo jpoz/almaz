@@ -1,9 +1,13 @@
 require 'rubygems'
 require 'sinatra'
-require 'almaz'
+require 'lib/almaz'
+
+enable :sessions
 
 use Almaz::Capture # used to capture all requests
 use Almaz::View # add /stats
+
+Almaz::Capture.session_variable = 'name'
 
 Almaz::View.user('jpoz','pass') # set your username and password here for the /stats area
 
@@ -11,8 +15,9 @@ get '/' do
   'Wazz up party people. Welcome to my site. Do what ever you want no body is watching you.'
 end
 
-get '/jpoz' do
-  'WOrrd'
+get '/mynameis/:name' do |name|
+  session['name'] = name
+  "Okay your name is now #{name}"
 end
 
 not_found do
