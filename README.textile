@@ -8,6 +8,14 @@ h2. Explanation
 
 Almaz is rack middlware which logs request information to a redis server, under a preset user session variable.
 
+h2. Installation
+
+<pre>
+  <code>
+    gem install almaz
+  </code>
+</pre>
+
 h2. Example
 
 h3. Almaz::Capture
