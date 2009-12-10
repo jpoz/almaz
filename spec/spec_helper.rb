@@ -25,11 +25,20 @@ Spec::Runner.configure do |config|
     begin
       @db.quit
     ensure
-      RedisRunner.stop
+      RedisRunner.stop rescue 'Oops'
     end
   }
 end
 
 def encode_credentials(username, password)
   "Basic " + Base64.encode64("#{username}:#{password}")
+end
+
+
+class ExampleSinatraApp < Sinatra::Base
+  
+  get '/awesome/controller' do
+    'wooo hoo'
+  end
+  
 end

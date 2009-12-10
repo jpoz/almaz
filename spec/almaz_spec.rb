@@ -15,6 +15,7 @@ describe Almaz do
     def app
       use Rack::Session::Cookie, :key => '_max_project_session'
       use Almaz::Capture
+      use ExampleSinatraApp
       Sinatra::Application
     end
   
@@ -56,6 +57,17 @@ describe Almaz do
           @db.list_range('almaz::user::1',0,-1).first.should include(Time.now.to_s)
         end
       end
+      
+      it "should not fail if there is no redis server" do
+        @db.quit
+        RedisRunner.stop
+        get '/awesome/controller'
+        result = RedisRunner.start_detached
+        sleep 1
+        @db = Redis.new :db => 15
+        
+        last_response.should be_successful
+      end
 
     end
   
@@ -81,20 +93,42 @@ describe Almaz do
       get '/almaz/1', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
       last_response.should be_successful
     end
+    
+    it "should respond to /almaz" do
+      get '/almaz', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
+      last_response.should be_successful
+    end
   
-    it 'should deny bad people' do
+    it 'should deny bad people away from show action' do
       get '/almaz/1', {}, {'HTTP_AUTHORIZATION' => encode_credentials('james', 'goaway')}
+      last_response.should_not be_successful
+    end
+    
+    it 'should deny bad people away from index action' do
+      get '/almaz', {}, {'HTTP_AUTHORIZATION' => encode_credentials('james', 'goaway')}
       last_response.should_not be_successful
     end
   
     describe 'with correct authentication' do
-      before(:each) do
-        get '/almaz/1', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
-      end
-    
       it "should return the list of request for the given user in json" do
+        get '/almaz/1', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
         last_response.body.should == @requests.to_json
         last_response.content_type.should == 'application/json'
+      end
+      
+      it 'should return the list of request for those without a value for the session_varible if noid is given' do
+        r = 'GET /login'
+        @db.push_tail('almaz::user::',r)
+        get '/almaz/noid', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
+        last_response.body.should include(r.to_json)
+      end
+      
+      it 'should return the list valid keys' do
+        @db.push_tail('almaz::user::awesome','GET /butter')
+        get '/almaz', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
+        last_response.body.should include('almaz::user::1'.to_json)
+        last_response.body.should include('almaz::user::'.to_json)
+        last_response.body.should include('almaz::user::awesome'.to_json)
       end
     end
   
