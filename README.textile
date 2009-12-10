@@ -11,31 +11,31 @@ Almaz is rack middlware which logs request information to a redis server, under 
 h2. Example
 
 h3. Almaz::Capture
+
 <pre>
   <code>
-  require 'almaz'
+    require 'almaz'
 
-  use Almaz::Capture
+    use Almaz::Capture
   
-  Almaz.redis_db = 7 # default is 0
-  Almaz.session_variable = :user
-  
+    Almaz.redis_db = 7 # default is 0
+    Almaz.session_variable = :user
   </code>
 </pre>
 
 By using Almaz::Capture and setting the session_variable to :user, all request are now logged under 'almaz::user::(session[:user])' in redis. Each user gets a separate list in the redis DB. All request that don't have the session variable :user are logged under 'almaz::user::'.
 
 h3. Almaz::View
+
 <pre>
   <code>
-  require 'almaz'
+    require 'almaz'
 
-  use Almaz::View
-  Almaz::View.user('jpoz','password')
+    use Almaz::View
+    Almaz::View.user('jpoz','password')
   
-  use Almaz::Capture
-  Almaz.session_variable = :user
-  
+    use Almaz::Capture
+    Almaz.session_variable = :user
   </code>
 </pre>
 
