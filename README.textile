@@ -1,6 +1,6 @@
 h1. Almaz
 
-<img src='http://www.pozdena.org/snaps/c8b18f2b24d3578c8b630a6f39165403.png'/>
+<img src='http://jpoz.net/almaz-medium-transparent.png'/>
 
 A super simple Rack middleware to log all paths and queries to Redis
 
