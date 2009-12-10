@@ -43,12 +43,7 @@ describe Almaz do
 
       it "should capture the post params under the session_variable" do
         post '/awesome/controller', :didyouknow => 'thatyouremyhero'
-        @db.list_range('almaz::user::1',0,-1).first.should include("didyouknow=thatyouremyhero")
-      end
-    
-      it "should rewind the post params" do
-        post '/awesome/controller', :didyouknow => 'thatyouremyhero'
-        rack_mock_session.last_request.env['rack.input'].read.should == "didyouknow=thatyouremyhero"
+        @db.list_range('almaz::user::1',0,-1).first.should include("{\"didyouknow\"=>\"thatyouremyhero\"}")
       end
       
       it "should record a timestamp on each request" do

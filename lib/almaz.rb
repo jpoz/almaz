@@ -4,7 +4,6 @@ require 'redis'
 require 'json'
 require 'cgi'
 
-
 class Almaz
   @@session_variable = 'session_id'
   @@redis_db = 0
@@ -26,8 +25,7 @@ class Almaz
     end
     
     def call(env)
-      @r.push_tail("almaz::#{Almaz.session_variable}::#{env['rack.session'][Almaz.session_variable]}", "#{Time.now.to_s} #{env['REQUEST_METHOD']} #{env['PATH_INFO']} #{env['QUERY_STRING']}#{CGI.unescape(env['rack.input'].read)}") rescue nil
-      env['rack.input'].rewind
+      @r.push_tail("almaz::#{Almaz.session_variable}::#{env['rack.session'][Almaz.session_variable]}", "#{Time.now.to_s} #{env['REQUEST_METHOD']} #{env['PATH_INFO']} #{env['QUERY_STRING']}#{env['rack.request.form_hash'].inspect}") rescue nil
       @app.call(env)
     end
   end
