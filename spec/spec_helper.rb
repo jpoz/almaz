@@ -2,6 +2,8 @@ require 'rubygems'
 gem 'rspec', '>= 1.2.8'
 require 'spec'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'almaz')
+require 'base64'
+require 'timecop'
 
 Spec::Runner.configure do |config|
   config.before(:all) {
@@ -26,4 +28,8 @@ Spec::Runner.configure do |config|
       RedisRunner.stop
     end
   }
+end
+
+def encode_credentials(username, password)
+  "Basic " + Base64.encode64("#{username}:#{password}")
 end

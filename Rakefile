@@ -7,7 +7,7 @@ require 'spec/rake/spectask'
 GEM = 'almaz'
 GEM_NAME = 'almaz'
 GEM_VERSION = '0.0.2'
-AUTHORS = ['James Pozdena', 'Max Ogden']
+AUTHORS = ['James Pozdena', 'Max Ogden', 'Andrew Kurtz', 'Dan Herrera']
 EMAIL = "jpoz@jpoz.net"
 HOMEPAGE = "http://github.com/jpoz/almaz"
 SUMMARY = "Almaz is watching!"
