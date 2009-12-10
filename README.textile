@@ -2,22 +2,53 @@ h1. Almaz
 
 <img src='http://jpoz.net/almaz-medium-transparent.png'/>
 
-A super simple Rack middleware to log all paths and queries to Redis
+Almaz is always watcing.
 
-h2. Usage
+h2. Explanation
 
+Almaz is rack middlware which logs are requests to a redis server. Each request is filled under a session variable.
+
+h2. Example
+
+h3. Almaz::Capture
 <pre>
   <code>
   require 'almaz'
 
-  use Almaz::Capture 
-  # used to capture all requests
+  use Almaz::Capture
   
-  use Almaz::View 
-  # add /stats
-
-  Almaz::View.user('jpoz','pass') 
-  # set your username and password here for the /stats area
+  Almaz.redis_db = 7 # default is 0
+  Almaz.session_variable = :user
   
   </code>
 </pre>
+
+By using Almaz::Capture and setting the session_variable to :user, all request are now logged under 'almaz::user::(session[:user])' in redis. Each user gets a separate list in the redis DB. All request that don't have the session variable :user are logged under 'almaz::user::'.
+
+h3. Almaz::View
+<pre>
+  <code>
+  require 'almaz'
+
+  use Almaz::View
+  Almaz::View.user('jpoz','password')
+  
+  use Almaz::Capture
+  Almaz.session_variable = :user
+  
+  </code>
+</pre>
+
+Almaz::View is a separate middleware allows the information saved by Almaz::Capture into redis to be consumed via json. It has two routes:
+
+  1. '/almaz' a index of all the keys in the Redis DB
+  2. '/almaz/:val' the list of request information for the user who has the session variable value :val
+  
+Both are protected behind basic HTTP authentication. Which is setup by calling Almaz::View.user('username','password').
+  
+h2. Coming soon
+
+h3. Almaz::Client
+
+  Yet another rack middleware to consume the json given out by Almaz::View.
+
