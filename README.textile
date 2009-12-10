@@ -41,8 +41,8 @@ h3. Almaz::View
 
 Almaz::View is a separate middleware allows the information saved by Almaz::Capture into redis to be consumed via json. It has two routes:
 
-  1. '/almaz' a index of all the keys in the Redis DB
-  2. '/almaz/:val' the list of request information for the user who has the session variable value :val
+  # '/almaz' a index of all the keys in the Redis DB
+  # '/almaz/:val' the list of request information for the user who has the session variable value :val
   
 Both are protected behind basic HTTP authentication. Which is setup by calling Almaz::View.user('username','password').
   
