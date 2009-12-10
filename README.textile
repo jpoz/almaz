@@ -6,7 +6,7 @@ Almaz is always watcing.
 
 h2. Explanation
 
-Almaz is rack middlware which logs are requests to a redis server. Each request is filled under a session variable.
+Almaz is rack middlware which logs request information to a redis server, under a preset user session variable.
 
 h2. Example
 
