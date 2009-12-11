@@ -6,22 +6,22 @@ require 'cgi'
 
 class Almaz
   @@session_variable = 'session_id'
-  @@redis_db = 0
+  @@redis_config = {:db => 0}
   
   def self.session_variable=(val)
     @@session_variable = val
   end
   def self.session_variable; @@session_variable; end 
   
-  def self.redis_db=(val)
-    @@redis_db = val
+  def self.redis_config=(new_config)
+    @@redis_config = new_config
   end
-  def self.redis_db; @@redis_db; end 
+  def self.redis_config; @@redis_config; end 
   
   class Capture
     def initialize(app)
       @app = app
-      @r = Redis.new(:db => Almaz.redis_db)
+      @r = Redis.new(Almaz.redis_config)
     end
     
     def call(env)
@@ -55,14 +55,14 @@ class Almaz
     get '/almaz' do
       protected!
       content_type :json
-      @r = Redis.new(:db => Almaz.redis_db)
+      @r = Redis.new(Almaz.redis_config)
       @r.keys('*').to_json
     end
   
     get '/almaz/:id' do |id|
       protected!
       content_type :json
-      @r = Redis.new(:db => Almaz.redis_db)
+      @r = Redis.new(Almaz.redis_config)
       id = '' if id == 'noid'
       @r.list_range("almaz::#{Almaz.session_variable}::#{id}", 0, -1).to_json
     end

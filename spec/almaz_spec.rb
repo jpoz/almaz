@@ -6,7 +6,7 @@ require 'rack/test'
 describe Almaz do
   before(:each) do
     Almaz.session_variable = :user
-    Almaz.redis_db = 15
+    Almaz.redis_config = {:db => 15}
   end
 
   describe Almaz::Capture do
@@ -59,7 +59,7 @@ describe Almaz do
         get '/awesome/controller'
         result = RedisRunner.start_detached
         sleep 1
-        @db = Redis.new :db => 15
+        @db = Redis.new(Almaz.redis_config)
         
         last_response.should be_successful
       end
