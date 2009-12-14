@@ -6,7 +6,9 @@ require 'rack/test'
 describe Almaz do
   before(:each) do
     Almaz.session_variable = :user
+    Almaz.expiry = 1000
     Almaz.redis_config = {:db => 15}
+    # Almaz.redis_config = {:db => 15, :logger => Logger.new(STDOUT), :debug => true}
   end
 
   describe Almaz::Capture do
@@ -63,6 +65,13 @@ describe Almaz do
         
         last_response.should be_successful
       end
+      
+      it "should expire the keys with expiry setting" do
+        Almaz.expiry = 1
+        get '/awesome/controller' 
+        sleep 2
+        @db.list_range('almaz::user::1',0,-1).should == []
+      end
 
     end
   
@@ -112,10 +121,8 @@ describe Almaz do
       end
       
       it 'should return the list of request for those without a value for the session_varible if noid is given' do
-        r = 'GET /login'
-        @db.push_tail('almaz::user::',r)
         get '/almaz/noid', {}, {'HTTP_AUTHORIZATION' => encode_credentials('andrew', 'iscool')}
-        last_response.body.should include(r.to_json)
+        last_response.body.should include('GET /almaz/noid')
       end
       
       it 'should return the list valid keys' do

@@ -9,6 +9,7 @@ use Almaz::View # add /stats
 
 Almaz.session_variable = 'name'
 Almaz.redis_config = {:db => 0, :host => 'localhost', :port => 6379}
+Almaz.expiry = 60 # one minute
 
 Almaz::View.user('jpoz','pass') # set your username and password here for the /stats area
 

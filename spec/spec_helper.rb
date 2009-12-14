@@ -4,6 +4,7 @@ require 'spec'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'almaz')
 require 'base64'
 require 'timecop'
+require 'logger'
 
 Spec::Runner.configure do |config|
   config.before(:all) {
@@ -14,11 +15,11 @@ Spec::Runner.configure do |config|
     sleep 1
 
     # use database 15 for testing so we dont accidentally step on real data
-    @db = Redis.new :db => 15
+    @db = Redis.new(:db => 15) #, :logger => Logger.new(STDOUT), :debug => true)
   }
   
   config.after(:each) {
-    @db.keys('*').each {|k| @db.del k}
+    @db.flushdb
   }
   
   config.after(:all) {

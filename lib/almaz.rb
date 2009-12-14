@@ -7,16 +7,16 @@ require 'cgi'
 class Almaz
   @@session_variable = 'session_id'
   @@redis_config = {:db => 0}
+  @@expiry = 60 * 60 # 1 hour
   
-  def self.session_variable=(val)
-    @@session_variable = val
-  end
+  def self.session_variable=(val); @@session_variable = val; end
   def self.session_variable; @@session_variable; end 
   
-  def self.redis_config=(new_config)
-    @@redis_config = new_config
-  end
-  def self.redis_config; @@redis_config; end 
+  def self.redis_config=(new_config); @@redis_config = new_config; end
+  def self.redis_config; @@redis_config; end
+  
+  def self.expiry=(new_expiry); @@expiry = new_expiry; end
+  def self.expiry; @@expiry; end 
   
   class Capture
     def initialize(app)
@@ -25,7 +25,13 @@ class Almaz
     end
     
     def call(env)
-      @r.push_tail("almaz::#{Almaz.session_variable}::#{env['rack.session'][Almaz.session_variable]}", "#{Time.now.to_s} #{env['REQUEST_METHOD']} #{env['PATH_INFO']} #{env['QUERY_STRING']}#{env['rack.request.form_hash'].inspect}") rescue nil
+      begin
+        key = "almaz::#{Almaz.session_variable}::#{env['rack.session'][Almaz.session_variable]}"
+        @r.push_tail(key, "#{Time.now.to_s} #{env['REQUEST_METHOD']} #{env['PATH_INFO']} #{env['QUERY_STRING']}#{env['rack.request.form_hash'].inspect}")
+        @r.expire(key, Almaz.expiry)
+      rescue => e
+        puts "ALMAZ ERROR: #{e}"
+      end
       @app.call(env)
     end
   end
