@@ -2,7 +2,7 @@ h1. Almaz
 
 <img src='http://jpoz.net/almaz-medium-transparent.png'/>
 
-Almaz is always watcing.
+Almaz is always watching!
 
 h2. Explanation
 
@@ -53,7 +53,11 @@ Almaz::View is a separate middleware allows the information saved by Almaz::Capt
   # '/almaz/:val' the list of request information for the user who has the session variable value :val
   
 Both are protected behind basic HTTP authentication. Which is setup by calling Almaz::View.user('username','password').
-  
+
+h2. Related Projects
+
+  Almaz MacRuby Client - "http://github.com/jpoz/almaz_client":http://github.com/jpoz/almaz_client
+
 h2. Coming soon
 
 h3. Almaz::Client
