@@ -64,3 +64,4 @@ h3. Almaz::Client
 
   Yet another rack middleware to consume the json given out by Almaz::View.
 
+!http://goo.gl/sqxB8(fail)!
